@@ -1515,7 +1515,7 @@ async function saveScanResult(){
   if(r.people?.length){for(let i=0;i<r.people.length;i++){const chk=document.getElementById(`scan-person-${i}`);if(!chk?.checked)continue;const name=document.getElementById(`scan-person-text-${i}`)?.value.trim()||r.people[i];if(!name)continue;let person=state.people.find(p=>p.name.toLowerCase()===name.toLowerCase());if(!person){person={id:uid(),name,role:'',createdAt:new Date().toISOString()};await dbPut('people',person);state.people.push(person);state.people.sort((a,b)=>a.name.localeCompare(b.name))}personIds.push(person.id)}}
   const note={id:uid(),title,body,tag:'work',date:$('scan-date')?.value||today(),personIds,source:'scan',archived:false,createdAt:new Date().toISOString()};
   await dbPut('notes',note);state.notes.unshift(note);state.notes.sort((a,b)=>b.date.localeCompare(a.date));
-  if(r.todos?.length){for(let i=0;i<r.todos.length;i++){const chk=document.getElementById(`scan-todo-${i}`);if(!chk?.checked)continue;const text=document.getElementById(`scan-todo-text-${i}`)?.value.trim();const pri=document.getElementById(`scan-todo-pri-${i}`)?.value||'normal';if(!text)continue;const todo={id:uid(),title:text,notes:'',priority:pri,due:r.todos[i].due||null,tag:'work',personId:personIds[0]||null,starred:false,noteId:note.id,done:false,archived:false,createdAt:new Date().toISOString(),completedAt:null};await dbPut('todos',todo);state.todos.unshift(todo)}}
+  if(r.todos?.length){for(let i=0;i<r.todos.length;i++){const chk=document.getElementById(`scan-todo-${i}`);if(!chk?.checked)continue;const text=document.getElementById(`scan-todo-text-${i}`)?.value.trim();const pri=document.getElementById(`scan-todo-pri-${i}`)?.value||'normal';if(!text)continue;const todo={id:uid(),title:text,notes:'',priority:pri,due:r.todos[i].due||null,tag:'work',personId:personIds[0]||null,starred:false,important:false,noteId:note.id,done:false,archived:false,createdAt:new Date().toISOString(),completedAt:null};await dbPut('todos',todo);state.todos.unshift(todo)}}
   closeOverlay('scan-overlay');navigateTo('notebook');state.selectedNoteId=note.id;renderNotebook();showToast('Notes saved ✓');
 }
 
@@ -1523,7 +1523,7 @@ async function saveScanResult(){
 async function handleQuickCapture(){
   const val=$('qc-input').value.trim();if(!val)return;
   if(state.qcType==='todo'){
-    const todo={id:uid(),title:val,notes:'',priority:'normal',due:null,tag:'work',personId:null,starred:false,noteId:null,done:false,archived:false,createdAt:new Date().toISOString(),completedAt:null};
+    const todo={id:uid(),title:val,notes:'',priority:'normal',due:null,tag:'work',personId:null,starred:false,important:false,noteId:null,done:false,archived:false,createdAt:new Date().toISOString(),completedAt:null};
     await dbPut('todos',todo);state.todos.unshift(todo);$('qc-input').value='';renderToday();buildNav();showToast('Task added');
   }else{$('qc-input').value='';openNoteDrawer();$('note-title-inp').value=val}
 }
